@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="stylesheet" href="/static/index.css">
+    <link rel="icon" href='/static/img/f.png' type="image/png">
+    <link rel="stylesheet" href="/static/utils.css">
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/static/commentview.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+</head>
+<body>
+    <a href="/">
+    <h1>POST</h1>
+    </a>
+    
+    <div class="post container">
+        <div class="post__header">
+            <img class="post__avatar" src="/static/img/avatar.png" />
+            <div class="post__info">
+                <h3 class="post__author">{{ .InitialPost.Author.Username}}</h3>
+                <span class="post__category">/{{ .InitialPost.Category}}/</span>
+                <span class="post__category">{{ .InitialPost.CreatedTime}}</span>
+            </div>
+        </div>
+        <h2 class="post__title">{{ .InitialPost.Title}}</h2>
+        <div class="post__content">
+            {{ .InitialPost.Content }}
+        </div>
+        <div class="post__actions">
+            <form action="/post/like/{{.InitialPost.Id}}" method="post">
+                <input type="hidden" name="isMainPage" value="false">
+                <span class="post__likes"><input class="imagesL" type="image" src="/static/img/love.png" width="50">{{ .InitialPost.Like}}</span>
+            </form>
+            <form  action="/post/dislike/{{.InitialPost.Id}}" method="post">
+                <input type="hidden" name="isMainPage" value="false">
+                <span class="post__dislikes"><input  class="imagesD" type="image" src="/static/img/dislike.png" width="50">{{ .InitialPost.Dislike}}</span>
+            </form>
+        </div>
+        
+           <form class="post__menu flex-create-comment" action="/post/comment/{{.InitialPost.Id}}" method="post" id="form1">
+                    <input  type="text" name="comment" required>
+                    <button class="btn" type="submit" form="form1">Create Comment</button>
+                    <!-- <button class="btn" form="form1">Create comment</button> -->
+            </form>
+            
+        </div>
+
+    <section class="container">
+        <div class="pointer-event">
+        <h3>Comments: </h3>
+        {{ $id :=  .InitialPost.Id }}
+        {{ range .Comment}}
+        </div>
+        <div class="comment">
+            <div class="author">
+                <img src="/static/img/avatar.png" alt="Avatar" class="avatar">
+                <span class="name">{{ .Username}}</span>
+             
+            </div>
+            <p class="post_created-time name">{{ .Born}}</p>
+            <div class="message">
+                <pre> {{ .Message}} </pre>
+            </div>
+            <div class="likes-dislikes">
+                <form action="/post/comment/like/{{ $id }}/{{.Id}}" method="post">
+                    <input type="image"  class="imagesL" src="/static/img/love.png" width="45">{{ .Like}}
+                   </form>
+                <form action="/post/comment/dislike/{{ $id }}/{{.Id}}" method="post">
+                    <input type="image"  class="imagesD" src="/static/img/dislike.png" width="45">{{ .Dislike}}
+                   </form>
+            </div>
+        </div>
+        {{end}}
+    </section>
+        
+    
+</div>
+</body>
+</html>

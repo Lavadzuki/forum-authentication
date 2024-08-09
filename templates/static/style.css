@@ -1,0 +1,159 @@
+:root{
+    --clr-dark: #070a13;
+    --clr-light:#f1f5f9 ;
+    --clr-slate400:#94a3b8 ;
+    --clr-slate600:#475569 ;
+    --clr-slate800: #1e293b;
+    --clr-rose: #db2777;
+    --clr-indigo: #4f46e5;
+    --clr-purple: #9333ea;
+    --clr-yellow: #ca8a04;
+
+    
+    --size-xxs: 0.5rem;
+    --size-xs: 0.75rem;
+    --size-sm: 0.875rem;
+    --size-base: 1rem;
+    --size-large: 1.125rem;
+    --size-xl: 1.25rem;
+    --size-2xl: 1.5rem;
+    --size-3xl: 1.875rem;
+    --size-4xl: 2.25rem;
+    --size-5xl: 3rem;
+    --size-6xl: 3.75rem;
+    --size-7xl: 4.5rem;
+    --size-8xl: 6rem;
+    --size-9xl: 8rem;
+    --size-10xl: 10rem;
+}
+
+
+
+
+body{
+    font-family: 'General Sans', sans-serif;
+    background-color: var(--clr-slate800);
+    color: var(--clr-light);
+    /* background-color: rgb(109, 75, 75); */
+}
+
+
+
+
+.center{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 400px;
+    background: var(--clr-light);
+    border-radius: 10px;
+}
+.center h4{
+    text-align: center;
+}
+.center h1{
+    text-align: center;
+    padding: 0 0 24px 0;
+    border-bottom: 1px solid silver;
+}
+.center form{
+    padding: 0 40px;
+    box-sizing: border-box;
+}
+form .txt_field{
+    position: relative;
+    border-bottom: 2px solid #adadad;
+    margin: 30px 0;
+}
+.txt_field input{
+    width: 100%;
+    padding: 0 5px;
+    height: 40px;
+    font-size: 16px;
+    border: none;
+    background: none;
+    outline: none;
+}
+.txt_field label{
+    position: absolute;
+    top: 50%;
+    left: 5px;
+    color: #adadad;
+    transform: translateY(-50%);
+    font-size: 16px ;
+    pointer-events: none;
+    transition: .5s;
+}
+.txt_field span::before{
+    content: '';
+    position: absolute;
+    top: 40px;
+    left: 0;
+    width: 0%;
+    height: 2px;
+    background: #2691d9;
+    transition: .5s;
+}
+.txt_field input:focus ~ label,
+.txt_field input:valid ~label{
+    top: -5px;
+    color: #2691d9;
+}
+.txt_field input:focus ~ span::before,
+.txt_field input:valid ~ span::before{
+    width: 100%;
+}
+.pass{
+    margin: -5px 0 20px 5px;
+    color: #a6a6a6;
+    cursor: pointer;
+}
+.pass:hover{
+    text-decoration:underline ;
+}
+input[type="submit"]{
+    width: 100%;
+    height: 50px;
+    border: 1px solid;
+    background: var(--clr-rose);
+    border-radius: 25px;
+    font-size: 18px;
+    color: #e9f4fb;
+    font-weight: 700;
+    cursor: pointer;
+    outline: none;
+}
+input[type="submit"]:hover{
+    border-color: var(--clr-indigo);
+    transition: .5s;
+}
+.signup_link{
+    margin: 30px 0;
+    text-align: center;
+    font-size: 16px;
+    color: #666666;
+}
+.signup_link a{
+    color: #2691d9;
+    text-decoration: none;
+}
+.signup_link a:hover{
+    text-decoration: underline;
+}
+
+
+/* Scroll bar */
+body::-webkit-scrollbar {
+    width: 8px;
+}
+   
+body::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 0 rgba(0, 0, 0, 0);
+}
+   
+body::-webkit-scrollbar-thumb {
+    background-color: var(--clr-rose);
+    outline: 1px solid var(--clr-rose);
+}
+

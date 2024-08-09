@@ -1,0 +1,56 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Create Post</title>
+  <link rel="icon" href='/static/img/f.png' type="image/png">
+  <link rel="stylesheet" href="/static/createpost.css">
+  <link rel="stylesheet" href="/static/utils.css">
+  <link rel="stylesheet" href="/static/style.css">
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+</head>
+<body>
+<div id="form-create">
+  <form  action="/post/" method="POST">
+    <label for="title">Title:</label>
+    <input type="text" name="title" placeholder="Enter post title..." required>
+    <label for="category">Category:</label>
+
+    <div class="flex-container">
+    <div class="category">
+    <input type="checkbox" name="category" value="fantasy">Fantasy
+    </div>
+
+    <div class="category">
+    <input type="checkbox" name="category" value="drama"  >Drama
+    </div>
+
+  <div class="category">
+    <input type="checkbox" name="category" value="comedy" checked >Comedy
+  </div>
+
+  <div class="category">
+    <input type="checkbox" name="category" value="adventure" >Adventure
+  </div>
+
+  <div class="category">
+    <input type="checkbox" name="category" value="romance" >Romance
+  </div>
+  </div class="category">
+    <label for="content">Content:</label>
+    <textarea name="message" cols="30" rows="10" placeholder="Enter post content..." required></textarea>
+    <input type="submit" value="Create">
+
+  
+  </form>
+<!-- 
+  <div class=" btn">
+    <a href="/post"><h1 class="posts">Create Post</h1></a>
+ </div> -->
+
+</div>
+</body>
+</html>

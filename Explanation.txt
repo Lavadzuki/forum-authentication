@@ -1,0 +1,10 @@
+StatusFound (302) - is used when ...
+make function for channels - Creating a Channel with appropriate type, if make (chan os.Signal 1) it makes a channel that allows to transmit only signals form os, 1 - is a capacity, saying only one signal at a time can be held by channel.
+SIGTERM
+    "Signal terminate"
+    The SIGTERM signal is sent to a process to request its termination. Unlike the SIGKILL signal, it can be caught and interpreted or ignored by the process. This allows the process to perform nice termination releasing resources and saving state if appropriate. SIGINT is nearly identical to SIGTERM.
+SIGINT
+    "Signal interrupt"
+    The SIGINT signal is sent to a process by its controlling terminal when a user wishes to interrupt the process. This is typically initiated by pressing Ctrl+C, but on some systems, the "delete" character or "break" key can be used.[12]
+<-shutdown --- waits until signal recieved, after recieving it continues the program
+Context with Timeout
