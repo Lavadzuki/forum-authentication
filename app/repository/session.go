@@ -13,12 +13,27 @@ type SessionQuery interface {
 	GetAllSessionsTime() ([]models.Session, error)
 	DeleteSession(token string) error
 	GetSessionByUserId(userId int) (models.Session, error)
+	DeleteSessionByUserId(userId int) error
 }
 
 type sessionQuery struct {
 	db *sql.DB
 }
 
+func (s sessionQuery) DeleteSessionByUserId(userId int) error {
+	res, err := s.db.Exec("delete from sessions where user_id = ?", userId)
+	if err != nil {
+		return err
+	}
+	rowsAffected, err := res.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if rowsAffected == 0 {
+		return errors.New("delete session was failed")
+	}
+	return nil
+}
 func (s sessionQuery) GetSessionByToken(token string) (models.Session, error) {
 	row := s.db.QueryRow(`select user_id,token,expiry from sessions where token=?`, token)
 	var session models.Session

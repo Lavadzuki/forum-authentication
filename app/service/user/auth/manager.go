@@ -9,6 +9,7 @@ type AuthService interface {
 	Login(user *models.User) (models.Session, error)
 	Register(user *models.User) error
 	Logout(token string) error
+	GoogleAuth(user models.GoogleUser) (models.Session, error)
 }
 type authService struct {
 	sessionQuery repository.SessionQuery
