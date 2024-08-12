@@ -39,7 +39,6 @@ body{
 
 
 
-
 .center{
     position: absolute;
     top: 50%;
@@ -143,6 +142,7 @@ input[type="submit"]:hover{
 }
 
 
+
 /* Scroll bar */
 body::-webkit-scrollbar {
     width: 8px;
@@ -156,4 +156,70 @@ body::-webkit-scrollbar-thumb {
     background-color: var(--clr-rose);
     outline: 1px solid var(--clr-rose);
 }
+.register{
+    color: var(--clr-rose)
+}
 
+.google__link{
+    color:var(--clr-light)
+}
+
+.google__link:hover{
+    transition:color 0.3s;
+    color:aliceblue
+
+}
+
+
+*, *:before, *:after {
+  box-sizing: border-box;
+}
+.g-sign-in-button {
+  margin: 10px;
+  display: inline-block;
+  width: 93%;
+  height: 50px;
+  background-color: var(--clr-slate800);
+  color: #fff;
+  border-radius: 50px;
+  box-shadow: 0 2px 4px 0 rgba(0,0,0,.25);
+  transition: background-color .218s, border-color .218s, box-shadow .218s;
+}
+.g-sign-in-button:hover {
+  cursor: pointer;
+  -webkit-box-shadow: 0 0 3px 3px rgba(66,133,244,.3);
+  box-shadow: 0 0 3px 3px rgba(66,133,244,.3);
+}
+.g-sign-in-button:active {
+  background-color: var(--clr-rose);
+  transition: background-color 0.2s;
+}
+.g-sign-in-button .content-wrapper {
+  height: 100%;
+  width: 100%;
+  border: 1px solid transparent;
+}
+.g-sign-in-button img {
+    width: 18px;
+    height: 18px;
+}
+.g-sign-in-button .logo-wrapper {
+   padding: 15px;
+   background:#fff;
+   width: 48px;
+   height: 100%;
+   border-radius: 25px; 
+   display: inline-block;
+}
+.g-sign-in-button .text-container {
+    font-family: Roboto,arial,sans-serif;
+    font-weight: 500;
+    letter-spacing: .21px;
+    font-size: 16px;
+    line-height: 48px;
+    vertical-align: top;
+    border: none;
+    display: inline-block;
+    text-align: center;
+    width: 180px;
+}
