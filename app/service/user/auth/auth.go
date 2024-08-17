@@ -110,3 +110,6 @@ func (a authService) GoogleAuth(googleUser models.GoogleUser) (models.Session, e
 	}
 	return session, nil
 }
+func (a authService) UpdateUser(user *models.User) error {
+	return a.userQuery.UpdateUser(user)
+}

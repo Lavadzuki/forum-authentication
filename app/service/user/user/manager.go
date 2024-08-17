@@ -8,6 +8,7 @@ import (
 type UserService interface {
 	GetUserByToken(token string) (models.User, error)
 	GetUserByEmail(email string) (models.User, error)
+	GetUserByIdOrEmail(id int64, email string) models.User
 }
 
 type userService struct {

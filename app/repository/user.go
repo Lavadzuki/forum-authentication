@@ -2,6 +2,7 @@ package repository
 
 import (
 	"database/sql"
+	"fmt"
 	"forum/app/models"
 	"strings"
 )
@@ -9,13 +10,23 @@ import (
 type UserQuery interface {
 	CreateUser(user *models.User) error
 	GetUserIdByToken(token string) (int, error)
-	GetUserByUserId(userId int) (models.User, error)
+	GetUserByUserId(userId int64) (models.User, error)
 	GetUserByEmail(email string) (models.User, error)
 	GetUserByUsername(username string) (models.User, error)
+	UpdateUser(user *models.User) error
 }
 
 type userQuery struct {
 	db *sql.DB
+}
+
+func (u *userQuery) UpdateUser(user *models.User) error {
+	query := "Update users set username=?,email=? where user_id=?"
+	_, err := u.db.Exec(query, user.Username, user.Email, user.ID)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (u *userQuery) GetUserIdByToken(token string) (int, error) {
@@ -28,11 +39,13 @@ func (u *userQuery) GetUserIdByToken(token string) (int, error) {
 	return userId, nil
 }
 
-func (u *userQuery) GetUserByUserId(userId int) (models.User, error) {
+func (u *userQuery) GetUserByUserId(userId int64) (models.User, error) {
 	row := u.db.QueryRow(`select user_id, email, password,username from users where user_id=?`, userId)
 	var user models.User
 	err := row.Scan(&user.ID, &user.Email, &user.Password, &user.Username)
 	if err != nil {
+		fmt.Println(err)
+		fmt.Println(1)
 		return models.User{}, err
 	}
 	return user, nil
