@@ -12,12 +12,21 @@ type UserQuery interface {
 	GetUserByUserId(userId int) (models.User, error)
 	GetUserByEmail(email string) (models.User, error)
 	GetUserByUsername(username string) (models.User, error)
+	UpdateUser(user *models.User) error
 }
 
 type userQuery struct {
 	db *sql.DB
 }
 
+func (u *userQuery) UpdateUser(user *models.User) error {
+	query := "Update users set username=?,email=? where user_id=?"
+	_, err := u.db.Exec(query, user.Username, user.Email, user.ID)
+	if err != nil {
+		return err
+	}
+	return nil
+}
 func (u *userQuery) GetUserIdByToken(token string) (int, error) {
 	row := u.db.QueryRow(`select user_id from sessions where token=?`, token)
 	var userId int

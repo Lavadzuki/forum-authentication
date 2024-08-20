@@ -1,13 +1,18 @@
 package handlers
 
 import (
+	"database/sql"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"forum/app/models"
 	"forum/pkg"
+	"github.com/google/uuid"
+	"log"
 	"net/http"
 	"net/url"
 	"strings"
+	"time"
 )
 
 const (
@@ -19,6 +24,75 @@ const (
 	ClientSecret      = "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"
 	RedirectURL       = "http://localhost:8000/google/auth/callback"
 )
+
+func (app *App) SingleSignOn(w http.ResponseWriter, r *http.Request, googleData models.GoogleUser) {
+	// Попробуем найти пользователя в базе данных по Email.
+	fmt.Println("asdzxc")
+	user, err := app.userService.GetUserByEmail(googleData.Email)
+	if err != nil {
+		if !errors.Is(sql.ErrNoRows, err) {
+			fmt.Println("Error fetching user:", err)
+			pkg.ErrorHandler(w, http.StatusInternalServerError)
+			return
+		} else {
+			newUser := models.User{
+				Email:    googleData.Email,
+				Username: googleData.Name,
+			}
+			err := app.authService.Register(&newUser)
+			if err != nil {
+				fmt.Println(err, "REgistter user")
+				pkg.ErrorHandler(w, http.StatusInternalServerError)
+				return
+			}
+			user = newUser
+		}
+	} else {
+		user.Username = googleData.Name
+		user.Email = googleData.Email
+		// Обновляем данные пользователя в базе данных
+		err := app.authService.UpdateUser(&user)
+		if err != nil {
+			pkg.ErrorHandler(w, http.StatusInternalServerError)
+			return
+		}
+	}
+
+	//TODO: remove su
+
+	//err = app.authService.Register(&user)
+	//if err != nil {
+	//	log.Printf("Error registering user: %v", err)
+	//	pkg.ErrorHandler(w, http.StatusInternalServerError)
+	//	return
+	//}
+
+	session := models.Session{
+		UserID:   user.ID,
+		Email:    user.Email,
+		Username: user.Username,
+		Token:    uuid.NewString(),
+		Expiry:   time.Now().Add(10 * time.Minute),
+	}
+
+	err = app.sessionService.CreateSession(&session)
+	if err != nil {
+		log.Printf("Error creating session: %v", err)
+		Messages.Message = "Failed to create session"
+		http.Redirect(w, r, "/sign-in", http.StatusFound)
+		return
+	}
+	http.SetCookie(w, &http.Cookie{
+		Name:    "session_token",
+		Value:   session.Token,
+		Expires: session.Expiry,
+	})
+
+	Sessions = append(Sessions, session)
+
+	// Перенаправляем пользователя на главную страницу
+	http.Redirect(w, r, "/", http.StatusSeeOther)
+}
 
 func (app *App) GoogleLogin(w http.ResponseWriter, r *http.Request) {
 
@@ -64,7 +138,9 @@ func (app *App) GoogleCallback(w http.ResponseWriter, r *http.Request) {
 		}
 		http.SetCookie(w, &cookie)
 	}
-	http.Redirect(w, r, "/", http.StatusSeeOther)
+	fmt.Println(googleData.Email)
+	app.SingleSignOn(w, r, googleData)
+	//http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
 func getGoogleAuthToken(authCode string) (models.GoogleResponse, error) {
@@ -106,5 +182,6 @@ func getGoogleUser(accessToken, tokenId string) (models.User, error) {
 	if err != nil {
 		return models.User{}, err
 	}
+
 	return UserResult, nil
 }
