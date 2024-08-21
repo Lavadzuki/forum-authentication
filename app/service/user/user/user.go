@@ -17,5 +17,5 @@ func (u *userService) GetUserByToken(token string) (models.User, error) {
 }
 
 func (u userService) GetUserByEmail(email string) (models.User, error) {
-	return models.User{}, nil
+	return u.repository.GetUserByEmail(email)
 }

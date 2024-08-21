@@ -27,31 +27,38 @@ const (
 
 func (app *App) SingleSignOn(w http.ResponseWriter, r *http.Request, googleData models.GoogleUser) {
 	// Попробуем найти пользователя в базе данных по Email.
-	fmt.Println("asdzxc")
 	user, err := app.userService.GetUserByEmail(googleData.Email)
+	fmt.Println(111)
+	fmt.Println(err)
 	if err != nil {
 		if !errors.Is(sql.ErrNoRows, err) {
-			fmt.Println("Error fetching user:", err)
+			fmt.Println(222)
 			pkg.ErrorHandler(w, http.StatusInternalServerError)
 			return
 		} else {
+			fmt.Println(33)
 			newUser := models.User{
 				Email:    googleData.Email,
 				Username: googleData.Name,
 			}
+			fmt.Println(4)
 			err := app.authService.Register(&newUser)
 			if err != nil {
 				fmt.Println(err, "REgistter user")
 				pkg.ErrorHandler(w, http.StatusInternalServerError)
 				return
 			}
+			fmt.Println(5)
 			user = newUser
+			fmt.Println(user.Username)
 		}
 	} else {
+		fmt.Println(6)
 		user.Username = googleData.Name
 		user.Email = googleData.Email
 		// Обновляем данные пользователя в базе данных
 		err := app.authService.UpdateUser(&user)
+		fmt.Println(7)
 		if err != nil {
 			pkg.ErrorHandler(w, http.StatusInternalServerError)
 			return
@@ -60,13 +67,7 @@ func (app *App) SingleSignOn(w http.ResponseWriter, r *http.Request, googleData 
 
 	//TODO: remove su
 
-	//err = app.authService.Register(&user)
-	//if err != nil {
-	//	log.Printf("Error registering user: %v", err)
-	//	pkg.ErrorHandler(w, http.StatusInternalServerError)
-	//	return
-	//}
-
+	fmt.Println(8)
 	session := models.Session{
 		UserID:   user.ID,
 		Email:    user.Email,
@@ -74,14 +75,18 @@ func (app *App) SingleSignOn(w http.ResponseWriter, r *http.Request, googleData 
 		Token:    uuid.NewString(),
 		Expiry:   time.Now().Add(10 * time.Minute),
 	}
+	fmt.Println(session.Username)
+	fmt.Println(9)
 
 	err = app.sessionService.CreateSession(&session)
+	fmt.Println(10)
 	if err != nil {
 		log.Printf("Error creating session: %v", err)
 		Messages.Message = "Failed to create session"
 		http.Redirect(w, r, "/sign-in", http.StatusFound)
 		return
 	}
+	fmt.Println(11)
 	http.SetCookie(w, &http.Cookie{
 		Name:    "session_token",
 		Value:   session.Token,
@@ -114,31 +119,34 @@ func (app *App) GoogleCallback(w http.ResponseWriter, r *http.Request) {
 		pkg.ErrorHandler(w, http.StatusInternalServerError)
 		return
 	}
+
 	googleUser, err := getGoogleUser(resToken.AccessToken, resToken.TokenID)
 	if err != nil {
+		log.Printf("Error getting user info: %v", err)
 		pkg.ErrorHandler(w, http.StatusInternalServerError)
 		return
 	}
+
 	googleData := models.GoogleUser{
-		Id:       googleUser.ID,
 		Email:    googleUser.Email,
-		Name:     googleUser.Username,
+		Name:     googleUser.Name,
 		Password: googleUser.Password,
 	}
-	session, err := app.authService.GoogleAuth(googleData)
-	if err != nil {
-		pkg.ErrorHandler(w, http.StatusInternalServerError)
-		return
-	} else {
-		cookie := http.Cookie{
-			Name:    "session_token",
-			Value:   session.Token,
-			Path:    "/",
-			Expires: session.Expiry,
-		}
-		http.SetCookie(w, &cookie)
-	}
-	fmt.Println(googleData.Email)
+
+	//session, err := app.authService.GoogleAuth(googleData)
+	//if err != nil {
+	//
+	//	pkg.ErrorHandler(w, http.StatusInternalServerError)
+	//	return
+	//} else {
+	//	cookie := http.Cookie{
+	//		Name:    "session_token",
+	//		Value:   session.Token,
+	//		Path:    "/",
+	//		Expires: session.Expiry,
+	//	}
+	//	http.SetCookie(w, &cookie)
+	//}
 	app.SingleSignOn(w, r, googleData)
 	//http.Redirect(w, r, "/", http.StatusSeeOther)
 }
@@ -165,23 +173,25 @@ func getGoogleAuthToken(authCode string) (models.GoogleResponse, error) {
 	return resultToken, nil
 }
 
-func getGoogleUser(accessToken, tokenId string) (models.User, error) {
+func getGoogleUser(accessToken, tokenId string) (models.GoogleUser, error) {
 	request, err := http.NewRequest("GET", GoogleUserInfoUrl, nil)
 	if err != nil {
-		return models.User{}, err
+		return models.GoogleUser{}, err
 	}
-	request.Header.Add("Authorization", "Bearer "+AccessToken)
+	request.Header.Add("Authorization", "Bearer "+accessToken)
 	client := http.Client{}
 	res, err := client.Do(request)
 	if err != nil {
-		return models.User{}, err
+		return models.GoogleUser{}, err
 	}
 	defer res.Body.Close()
-	var UserResult models.User
+	fmt.Println(res.Body)
+
+	var UserResult models.GoogleUser
 	err = json.NewDecoder(res.Body).Decode(&UserResult)
 	if err != nil {
-		return models.User{}, err
+		return models.GoogleUser{}, err
 	}
-
+	fmt.Println(UserResult.Email, "getgoogleUser")
 	return UserResult, nil
 }

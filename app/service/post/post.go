@@ -2,6 +2,7 @@ package post
 
 import (
 	"errors"
+	"fmt"
 	"forum/app/models"
 	"log"
 	"net/http"
@@ -21,6 +22,7 @@ func (p postService) GetAllPosts() ([]models.Post, error) {
 }
 
 func (p postService) CreatePost(post *models.Post) (int, error) {
+	fmt.Println(post.Author, "post author in service")
 	ok := validDataString(post.Title)
 	if !ok {
 		return http.StatusBadRequest, errors.New("title is invalid")
