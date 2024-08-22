@@ -85,7 +85,9 @@ func (app *App) SingleSignOn(w http.ResponseWriter, r *http.Request, googleData 
 		Name:    "session_token",
 		Value:   session.Token,
 		Expires: session.Expiry,
+		Path:    "/",
 	})
+	fmt.Println(w.Header(), 11111)
 
 	Sessions = append(Sessions, session)
 
