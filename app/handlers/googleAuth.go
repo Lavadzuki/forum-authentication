@@ -16,8 +16,8 @@ import (
 )
 
 const (
-	GoogleAuthURL     = "https://accounts.google.com/o/oauth2/auth"
-	AccessToken       = "Client"
+	GoogleAuthURL = "https://accounts.google.com/o/oauth2/auth"
+
 	GoogleUserInfoUrl = "https://www.googleapis.com/oauth2/v2/userinfo"
 	GoogleTokenUrl    = "https://accounts.google.com/o/oauth2/token"
 	ClientId          = "828677259564-u6libcjtdog4tfcm9c1t4dsipgne0m9i.apps.googleusercontent.com"
@@ -46,18 +46,24 @@ func (app *App) SingleSignOn(w http.ResponseWriter, r *http.Request, googleData 
 				pkg.ErrorHandler(w, http.StatusInternalServerError)
 				return
 			}
-			user = newUser
-		}
-	} else {
-		user.Username = googleData.Name
-		user.Email = googleData.Email
-		// Обновляем данные пользователя в базе данных
-		err := app.authService.UpdateUser(&user)
-		if err != nil {
-			pkg.ErrorHandler(w, http.StatusInternalServerError)
-			return
+			user, err = app.userService.GetUserByEmail(newUser.Email)
+			if err != nil {
+				log.Println(err)
+				pkg.ErrorHandler(w, http.StatusInternalServerError)
+				return
+			}
 		}
 	}
+
+	//} else {
+	//	user := models.User{Email: googleData.Email, Username: user.Username}
+	//	// Обновляем данные пользователя в базе данных
+	//	err := app.authService.UpdateUser(&user)
+	//	if err != nil {
+	//		pkg.ErrorHandler(w, http.StatusInternalServerError)
+	//		return
+	//	}
+	//}
 
 	session := models.Session{
 		UserID:   user.ID,
@@ -66,6 +72,7 @@ func (app *App) SingleSignOn(w http.ResponseWriter, r *http.Request, googleData 
 		Token:    uuid.NewString(),
 		Expiry:   time.Now().Add(10 * time.Minute),
 	}
+	fmt.Println(session)
 
 	err = app.sessionService.CreateSession(&session)
 	if err != nil {
@@ -82,7 +89,7 @@ func (app *App) SingleSignOn(w http.ResponseWriter, r *http.Request, googleData 
 
 	Sessions = append(Sessions, session)
 
-	http.Redirect(w, r, "/", http.StatusSeeOther)
+	http.Redirect(w, r, "/", http.StatusFound)
 }
 
 func (app *App) GoogleLogin(w http.ResponseWriter, r *http.Request) {

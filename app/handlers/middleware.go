@@ -55,7 +55,7 @@ func (app *App) authorizedMiddleware(next http.HandlerFunc) http.HandlerFunc {
 				return
 			}
 		}
-		// fmt.Println("AuthPath[path]: ", AuthPaths)
+
 		if _, ok := AuthPaths[path]; !ok {
 			pkg.ErrorHandler(w, http.StatusNotFound)
 			return
@@ -90,7 +90,7 @@ func (app *App) authorizedMiddleware(next http.HandlerFunc) http.HandlerFunc {
 func (app *App) nonAuthorizedMiddleware(next http.HandlerFunc) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		path := r.URL.Path
-		// fmt.Println(path)
+
 		parts := strings.Split(r.URL.Path, "/")
 		if path == "/sign-in" {
 			path = "/sign-in"
@@ -101,7 +101,6 @@ func (app *App) nonAuthorizedMiddleware(next http.HandlerFunc) http.HandlerFunc 
 		} else {
 			path = "/" + parts[1] + "/" + parts[2] + "/"
 		}
-		// fmt.Println("path", path)
 
 		if _, ok := AuthPaths[path]; !ok {
 			pkg.ErrorHandler(w, http.StatusNotFound)

@@ -63,6 +63,7 @@ func (a authService) Register(user *models.User) error {
 		return errors.New("password hash was failed")
 	}
 	newUser := models.User{
+		ID:       user.ID,
 		Username: user.Username,
 		Email:    user.Email,
 		Password: string(passwordHash),
