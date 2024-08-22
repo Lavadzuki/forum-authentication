@@ -28,8 +28,6 @@ const (
 func (app *App) SingleSignOn(w http.ResponseWriter, r *http.Request, googleData models.GoogleUser) {
 	// Попробуем найти пользователя в базе данных по Email.
 	user, err := app.userService.GetUserByEmail(googleData.Email)
-	fmt.Println(111)
-	fmt.Println(err)
 	if err != nil {
 		if !errors.Is(sql.ErrNoRows, err) {
 			fmt.Println(222)
@@ -48,26 +46,19 @@ func (app *App) SingleSignOn(w http.ResponseWriter, r *http.Request, googleData 
 				pkg.ErrorHandler(w, http.StatusInternalServerError)
 				return
 			}
-			fmt.Println(5)
 			user = newUser
-			fmt.Println(user.Username)
 		}
 	} else {
-		fmt.Println(6)
 		user.Username = googleData.Name
 		user.Email = googleData.Email
 		// Обновляем данные пользователя в базе данных
 		err := app.authService.UpdateUser(&user)
-		fmt.Println(7)
 		if err != nil {
 			pkg.ErrorHandler(w, http.StatusInternalServerError)
 			return
 		}
 	}
 
-	//TODO: remove su
-
-	fmt.Println(8)
 	session := models.Session{
 		UserID:   user.ID,
 		Email:    user.Email,
@@ -75,18 +66,14 @@ func (app *App) SingleSignOn(w http.ResponseWriter, r *http.Request, googleData 
 		Token:    uuid.NewString(),
 		Expiry:   time.Now().Add(10 * time.Minute),
 	}
-	fmt.Println(session.Username)
-	fmt.Println(9)
 
 	err = app.sessionService.CreateSession(&session)
-	fmt.Println(10)
 	if err != nil {
 		log.Printf("Error creating session: %v", err)
 		Messages.Message = "Failed to create session"
-		http.Redirect(w, r, "/sign-in", http.StatusFound)
 		return
 	}
-	fmt.Println(11)
+
 	http.SetCookie(w, &http.Cookie{
 		Name:    "session_token",
 		Value:   session.Token,
@@ -95,7 +82,6 @@ func (app *App) SingleSignOn(w http.ResponseWriter, r *http.Request, googleData 
 
 	Sessions = append(Sessions, session)
 
-	// Перенаправляем пользователя на главную страницу
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
