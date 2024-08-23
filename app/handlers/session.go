@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"log"
 	"time"
 )
@@ -8,7 +9,7 @@ import (
 func (app *App) ClearSession() {
 	for {
 		Sessions, err := app.sessionService.GetAllSessionsTime()
-		// fmt.Println("SESSIONS: ", Sessions)
+		fmt.Println("SESSIONS: ", Sessions)
 		if err != nil {
 			log.Println("error of getting all sesions time", err.Error())
 		}
