@@ -27,6 +27,7 @@ func (app *App) LoginHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		session, err := app.authService.Login(&user)
 		if err != nil {
+			log.Printf("error while login: %v", err)
 			Messages.Message = "Wrong password or email"
 			http.Redirect(w, r, "/sign-in", http.StatusFound)
 			return
@@ -38,7 +39,6 @@ func (app *App) LoginHandler(w http.ResponseWriter, r *http.Request) {
 		})
 
 		Sessions = append(Sessions, session)
-		// fmt.Println(Sessions)
 
 		http.Redirect(w, r, "/", http.StatusFound)
 

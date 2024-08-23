@@ -74,11 +74,9 @@ func (app *App) GithubCallbackHandler(w http.ResponseWriter, r *http.Request) {
 		pkg.ErrorHandler(w, http.StatusInternalServerError)
 		return
 	}
-
 	githubUser.Email = primaryEmail
 	app.SingleSignOn(w, r, githubUser)
 
-	app.SingleSignOn(w, r, githubUser)
 }
 
 func getGithubAuthToken(code string) (models.GithubResponse, error) {
@@ -121,7 +119,6 @@ func getGithubAuthToken(code string) (models.GithubResponse, error) {
 }
 
 func getGithubUser(accessToken string) (models.OAuthUser, error) {
-	fmt.Println(accessToken)
 	request, err := http.NewRequest("GET", GithubUserInfoURL, nil)
 	if err != nil {
 		log.Printf("Error creating request for GitHub user: %v\n", err)
@@ -137,7 +134,6 @@ func getGithubUser(accessToken string) (models.OAuthUser, error) {
 		return models.OAuthUser{}, err
 	}
 	defer response.Body.Close()
-	fmt.Println(response)
 
 	if response.StatusCode != http.StatusOK {
 		log.Printf("Error: non-200 response from GitHub user endpoint: %d\n", response.StatusCode)
@@ -150,7 +146,6 @@ func getGithubUser(accessToken string) (models.OAuthUser, error) {
 		log.Printf("Error decoding GitHub user response: %v\n", err)
 		return models.OAuthUser{}, err
 	}
-	fmt.Println(githubUser)
 	return githubUser, nil
 }
 func getGithubUserEmails(accessToken string) ([]models.GithubEmail, error) {

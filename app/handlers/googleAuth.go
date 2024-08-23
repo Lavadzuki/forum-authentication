@@ -140,7 +140,7 @@ func (app *App) GoogleCallback(w http.ResponseWriter, r *http.Request) {
 	//	http.SetCookie(w, &cookie)
 	//}
 	app.SingleSignOn(w, r, googleData)
-	//http.Redirect(w, r, "/", http.StatusSeeOther)
+
 }
 
 func getGoogleAuthToken(authCode string) (models.GoogleResponse, error) {
@@ -177,13 +177,11 @@ func getGoogleUser(accessToken, tokenId string) (models.OAuthUser, error) {
 		return models.OAuthUser{}, err
 	}
 	defer res.Body.Close()
-	fmt.Println(res.Body)
 
 	var UserResult models.OAuthUser
 	err = json.NewDecoder(res.Body).Decode(&UserResult)
 	if err != nil {
 		return models.OAuthUser{}, err
 	}
-	fmt.Println(UserResult.Email, "getgoogleUser")
 	return UserResult, nil
 }
