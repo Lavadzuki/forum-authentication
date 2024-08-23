@@ -25,6 +25,8 @@ func (app *App) Run(cfg config.Http) *http.Server {
 		"/post/comment/dislike/",
 		"/google/auth/",
 		"/google/auth/callback/",
+		"/github/auth/",
+		"/github/auth/callback/",
 	}
 	AddAuthPath(authPaths...)
 
@@ -41,8 +43,11 @@ func (app *App) Run(cfg config.Http) *http.Server {
 	mux.HandleFunc("/filter/", app.authorizedMiddleware(app.FilterHandler)) // filter
 	mux.HandleFunc("/logout/", app.authorizedMiddleware(app.LogoutHandler)) // auth
 
-	mux.HandleFunc("/google/auth/", app.nonAuthorizedMiddleware(app.GoogleLogin))
-	mux.HandleFunc("/google/auth/callback/", app.nonAuthorizedMiddleware(app.GoogleCallback))
+	mux.HandleFunc("/google/auth/", app.nonAuthorizedMiddleware(app.GoogleLogin))             //googleAuth
+	mux.HandleFunc("/google/auth/callback/", app.nonAuthorizedMiddleware(app.GoogleCallback)) //googleAuth
+
+	mux.HandleFunc("/github/auth/", app.nonAuthorizedMiddleware(app.GithubLoginHandler))            //githubAuth
+	mux.HandleFunc("/github/auth/callback", app.nonAuthorizedMiddleware(app.GithubCallbackHandler)) //githubAuth
 
 	mux.HandleFunc("/welcome/", app.nonAuthorizedMiddleware(app.WelcomeHandler))                // home
 	mux.HandleFunc("/sign-in", app.nonAuthorizedMiddleware(app.LoginHandler))                   // auth

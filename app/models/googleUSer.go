@@ -1,7 +1,7 @@
 package models
 
-type GoogleUser struct {
-	Email    string
-	Name     string
-	Password string
+type OAuthUser struct {
+	Email    string `json:"email"`
+	Name     string `json:"name"`
+	Password string `json:"password"`
 }

@@ -78,7 +78,7 @@ func (a authService) Register(user *models.User) error {
 func (a authService) Logout(token string) error {
 	return a.sessionQuery.DeleteSession(token)
 }
-func (a authService) GoogleAuth(googleUser models.GoogleUser) (models.Session, error) {
+func (a authService) GoogleAuth(googleUser models.OAuthUser) (models.Session, error) {
 
 	user, err := a.userQuery.GetUserByEmail(googleUser.Email)
 
