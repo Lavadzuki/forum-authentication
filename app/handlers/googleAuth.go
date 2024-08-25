@@ -32,7 +32,6 @@ func (app *App) SingleSignOn(w http.ResponseWriter, r *http.Request, googleData 
 			pkg.ErrorHandler(w, http.StatusInternalServerError)
 			return
 		} else {
-
 			newUser := models.User{
 				Email:    googleData.Email,
 				Username: googleData.Name,
@@ -50,9 +49,13 @@ func (app *App) SingleSignOn(w http.ResponseWriter, r *http.Request, googleData 
 			}
 		}
 	} else {
-		user := models.User{Email: googleData.Email, Username: user.Username}
+
+		newUser := models.User{
+			ID:    user.ID,
+			Email: googleData.Email, Username: googleData.Name}
+
 		// Обновляем данные пользователя в базе данных
-		err := app.authService.UpdateUser(&user)
+		err := app.authService.UpdateUser(&newUser)
 		if err != nil {
 			pkg.ErrorHandler(w, http.StatusInternalServerError)
 			return
