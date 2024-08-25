@@ -39,7 +39,6 @@ func (app *App) CommentHandler(w http.ResponseWriter, r *http.Request) {
 	case http.MethodPost:
 		parts := strings.Split(r.URL.Path, "/")
 		id, err := strconv.Atoi(parts[3])
-		// fmt.Println(id)
 		if err != nil {
 			log.Println(err)
 			pkg.ErrorHandler(w, http.StatusNotFound)

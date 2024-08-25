@@ -9,7 +9,6 @@ import (
 )
 
 func (app *App) FilterHandler(w http.ResponseWriter, r *http.Request) {
-	// fmt.Println("Filter called: ", r.URL.Path)
 	parts := strings.Split(r.URL.Path, "/")
 	category := parts[2]
 
@@ -41,10 +40,9 @@ func (app *App) WelcomeFilterHandler(w http.ResponseWriter, r *http.Request) {
 		pkg.ErrorHandler(w, http.StatusMethodNotAllowed)
 		return
 	}
-	// fmt.Println("Filter called: ", r.URL.Path)
+
 	parts := strings.Split(r.URL.Path, "/")
 	category := parts[3]
-	// fmt.Println("Category: ", category)
 	data, status := app.postService.GetWelcomeFilterPosts(category)
 	switch status {
 	case http.StatusInternalServerError:

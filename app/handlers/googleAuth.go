@@ -29,7 +29,6 @@ func (app *App) SingleSignOn(w http.ResponseWriter, r *http.Request, googleData 
 	user, err := app.userService.GetUserByEmail(googleData.Email)
 	if err != nil {
 		if !errors.Is(sql.ErrNoRows, err) {
-
 			pkg.ErrorHandler(w, http.StatusInternalServerError)
 			return
 		} else {
@@ -38,10 +37,8 @@ func (app *App) SingleSignOn(w http.ResponseWriter, r *http.Request, googleData 
 				Email:    googleData.Email,
 				Username: googleData.Name,
 			}
-
 			err := app.authService.Register(&newUser)
 			if err != nil {
-
 				pkg.ErrorHandler(w, http.StatusInternalServerError)
 				return
 			}
@@ -52,17 +49,15 @@ func (app *App) SingleSignOn(w http.ResponseWriter, r *http.Request, googleData 
 				return
 			}
 		}
+	} else {
+		user := models.User{Email: googleData.Email, Username: user.Username}
+		// Обновляем данные пользователя в базе данных
+		err := app.authService.UpdateUser(&user)
+		if err != nil {
+			pkg.ErrorHandler(w, http.StatusInternalServerError)
+			return
+		}
 	}
-
-	//} else {
-	//	user := models.User{Email: googleData.Email, Username: user.Username}
-	//	// Обновляем данные пользователя в базе данных
-	//	err := app.authService.UpdateUser(&user)
-	//	if err != nil {
-	//		pkg.ErrorHandler(w, http.StatusInternalServerError)
-	//		return
-	//	}
-	//}
 
 	session := models.Session{
 		UserID:   user.ID,
