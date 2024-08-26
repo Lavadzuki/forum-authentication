@@ -3,7 +3,6 @@ package repository
 import (
 	"database/sql"
 	"errors"
-	"fmt"
 	"forum/app/models"
 	"log"
 )
@@ -90,7 +89,6 @@ func (s sessionQuery) GetSessionByUserId(userId int) (models.Session, error) {
 }
 
 func (s sessionQuery) CreateSession(session models.Session) error {
-	fmt.Println(session)
 	tx, err := s.db.Begin()
 	if err != nil {
 		return err
