@@ -50,12 +50,12 @@ func (app *App) SingleSignOn(w http.ResponseWriter, r *http.Request, googleData 
 		}
 	} else {
 
-		newUser := models.User{
+		user := models.User{
 			ID:    user.ID,
 			Email: googleData.Email, Username: googleData.Name}
 
 		// Обновляем данные пользователя в базе данных
-		err := app.authService.UpdateUser(&newUser)
+		err := app.authService.UpdateUser(&user)
 		if err != nil {
 			pkg.ErrorHandler(w, http.StatusInternalServerError)
 			return
