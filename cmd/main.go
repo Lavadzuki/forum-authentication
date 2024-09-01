@@ -49,8 +49,8 @@ func main() {
 	go app.ClearSession()
 
 	go func() {
-		log.Printf("server started at http://localhost%s", cfg.Port)
-		err := server.ListenAndServe()
+		log.Printf("server started at https://localhost%s", cfg.Port)
+		err := server.ListenAndServeTLS("./tls/cert.pem", "./tls/key.pem")
 		if err != nil {
 			log.Printf("listen %s ", err)
 		}
