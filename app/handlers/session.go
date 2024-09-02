@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"log"
 	"time"
 )
@@ -12,7 +11,6 @@ func (app *App) ClearSession() {
 		if err != nil {
 			log.Println("error of getting all sesions time", err.Error())
 		}
-		fmt.Println(Sessions)
 		time.Sleep(time.Second)
 		for i, v := range Sessions {
 			if v.Expiry.Before(time.Now()) {

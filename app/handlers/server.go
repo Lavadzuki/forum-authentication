@@ -7,6 +7,7 @@ import (
 )
 
 func (app *App) Run(cfg config.Http) *http.Server {
+
 	authPaths := []string{
 		"/",
 		"/reaction",

@@ -18,11 +18,23 @@ func AddAuthPath(paths ...string) {
 	for _, path := range paths {
 		AuthPaths[path] = struct{}{}
 	}
-	// fmt.Println(AuthPaths)
+}
+
+func (app *App) ratelimiter(next http.Handler) http.HandlerFunc {
+	rl := NewRateLimiter(10, time.Minute)
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		ip := r.RemoteAddr
+		if !rl.Allow(ip) {
+			http.Error(w, http.StatusText(http.StatusTooManyRequests), http.StatusTooManyRequests)
+			return
+		}
+		next.ServeHTTP(w, r)
+	})
 }
 
 func (app *App) authorizedMiddleware(next http.HandlerFunc) http.HandlerFunc {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	// Оборачиваем логику авторизации в rate limiting middleware
+	return app.ratelimiter(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		url := r.URL.Path
 		path := ""
 		parts := strings.Split(url, "/")
@@ -60,6 +72,7 @@ func (app *App) authorizedMiddleware(next http.HandlerFunc) http.HandlerFunc {
 			pkg.ErrorHandler(w, http.StatusNotFound)
 			return
 		}
+
 		cookie, err := r.Cookie("session_token")
 		if err != nil {
 			http.Redirect(w, r, "/sign-in", http.StatusFound)
@@ -84,7 +97,7 @@ func (app *App) authorizedMiddleware(next http.HandlerFunc) http.HandlerFunc {
 		ctx := context.WithValue(r.Context(), KeyUserType(keyUser), user)
 
 		next.ServeHTTP(w, r.WithContext(ctx))
-	})
+	}))
 }
 
 func (app *App) nonAuthorizedMiddleware(next http.HandlerFunc) http.HandlerFunc {
